@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="fr">
+    <meta charset="UTF-8">
+    <!--Page Title-->
+    <title>Hack-Oeil - Les CTFs de Cyrhades</title>
+    <!--Meta Keywords and Description-->
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" href="./assets/images/favicon.ico" title="Favicon" />
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="./assets/css/github.min.css">
+    <script src="./assets/js/highlight.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérifie si la fenêtre est dans une iframe
+            if (window.self !== window.top) {
+                document.querySelectorAll('a').forEach((link) => {
+                    link.addEventListener('click', (event) => {
+                        const a = event.target.closest('a[href^="http"]');
+                        if (a) {
+                            event.preventDefault();
+                            window.parent.postMessage({
+                                type: "open-external",
+                                url: a.href
+                            }, "*");
+                        }
+                    });
+                });
+            }
+            // Active la coloration syntaxique :
+            if (window.hljs) {
+                hljs.highlightAll();
+            } else {
+                console.error("Highlight.js non chargé !");
+            }
+        });
+    </script>
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <!--Main Content Area-->
+        <main id="content">
+            <!--Ctf-->
+            <section class="ctf scrollto">
+                <article class="row clearfix">
+                    <div class="col-1">
+                        <div class="section-heading">
+                            <h3>Challenge #322</h3>
+                            <h2 class="section-title">Surface</h2>
+                            <p>
+                                Ce script implémente une manière exotique de générer une clé AES qui protège le flag.
+                                Pourrez-vous retrouver cette clé ?
+                            </p>
+                            <h4>Fichiers à étudier</h4>
+                            <p>
+                                - surface.py<br />
+                                - output.txt
+                            </p><br />
+                            <strong>surface.py</strong>
+                            <pre><code class="language-python">import os
+import json
+import gmpy2
+from fractions import Fraction
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+
+def encrypt(n):
+	IV = os.urandom(16)
+	FLAG = open("flag.txt", "rb").read()
+
+	k = int.to_bytes(n, 32, "big")
+	aes = AES.new(k, AES.MODE_CBC, iv = IV)
+	ctxt = aes.encrypt(pad(FLAG, 16))
+	output = {
+		"iv": IV.hex(),
+		"ciphertext": ctxt.hex(),
+	}
+	return output
+
+if __name__ == "__main__":
+
+	try:
+		a = Fraction(input(">>> a = "))
+		b = Fraction(input(">>> b = "))
+		
+		c = a ** 2 + b ** 2
+		assert gmpy2.is_square(c.numerator)
+		assert gmpy2.is_square(c.denominator)
+		assert a * b == 20478
+
+		n = int(gmpy2.isqrt(c.numerator))
+		
+		output = encrypt(n)
+		print(json.dumps(output))
+
+	except:
+		print("Error: check your inputs.")
+</code></pre><br />
+                            <strong>output.txt</strong>
+                            <pre>{"iv": "a79ec4a60d33eae0e0d9e06f8b309348", "ciphertext": "29d4c8dceecb461cfc7c06242d25879cdcf47fca47ded512ea830d09613ecd497a9720231cb423e95ed2463f5f74d8f5c4c9b75704ff738fe48475191b62f14280f32c05daf9300ab1d692d8717371dc"}</pre>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="row clearfix">
+                    <div class="col-1">
+                        <div class="section-heading">
+                            <h3>FCSC 2022</h3>
+                            <h2 class="section-title">Hackropole</h2>
+                            <p class="section-subtitle">
+                                Lien officiel :
+                                <a target="_blank"
+                                    href="https://hackropole.fr/fr/challenges/crypto/fcsc2022-crypto-surface/">FCSC
+                                    2022 -
+                                    Surface
+                                </a>
+                                <br />
+                                Auteur: <a target="_blank" href="https://twitter.com/Cryptanalyse">Cryptanalyse</a>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="row clearfix">
+                    <div class="col-1">
+                        <div class="section-heading">
+                            <h3>Apprentissage</h3>
+                            <h2 class="section-title">Documentations et Vidéos</h2>
+                            <p class="section-subtitle">
+                                Aucune documentation pour le moment
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="row clearfix">
+                    <div class="col-1">
+                        <div class="section-heading">
+                            <h3>Aide</h3>
+                            <h2 class="section-title">Conseils et indices</h2>
+                            <p class="section-subtitle">
+                                <a target="_blank"
+                                    href="https://discord.com/channels/1175764392307077120/1175764601716092948">Fil sur
+                                    le Discord</a>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            </section>
+            <!--End of Ctf-->
+        </main>
+        <!--End Main Content Area-->
+
+        <a id="scrollUp" href="#wrapper" style="position: fixed; z-index: 1000;"
+            aria-label="Remonter en haut de la page" title="Remonter en tête de site"></a>
+    </div>
+</body>
+
+</html>
